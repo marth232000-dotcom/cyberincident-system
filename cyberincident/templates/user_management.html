@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block title %}Usimamizi wa Watumiaji - CIRS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-users me-2"></i>Usimamizi wa Watumiaji</h2>
+    <a href="{% url 'register' %}" class="btn btn-primary">
+        <i class="fas fa-user-plus me-2"></i>Ongeza Mtumiaji
+    </a>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" action="{% url 'user_management' %}" class="row g-3">
+            <div class="col-md-6">
+                <input type="text" class="form-control" name="q" placeholder="Tafuta mtumiaji..." value="{{ request.GET.q }}">
+            </div>
+            <div class="col-md-4">
+                <select class="form-select" name="role">
+                    <option value="">Wote</option>
+                    {% for role_value, role_label in role_choices %}
+                    <option value="{{ role_value }}" {% if request.GET.role == role_value %}selected{% endif %}>
+                        {{ role_label }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search me-2"></i>Chuja
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Users Table -->
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Jina</th>
+                        <th>Jina la Mtumiaji</th>
+                        <th>Barua Pepe</th>
+                        <th>Jukumu</th>
+                        <th>Idara</th>
+                        <th>Hali</th>
+                        <th>Vitendo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>{{ user.get_full_name|default:user.username }}</td>
+                        <td>{{ user.username }}</td>
+                        <td>{{ user.email }}</td>
+                        <td><span class="badge bg-primary">{{ user.profile.get_role_display }}</span></td>
+                        <td>{{ user.profile.department|default:"-" }}</td>
+                        <td>
+                            {% if user.profile.is_active %}
+                            <span class="badge bg-success">Inatumika</span>
+                            {% else %}
+                            <span class="badge bg-danger">Imekatwa</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if user != request.user %}
+                            <a href="{% url 'toggle_user' user.id %}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-{% if user.profile.is_active %}ban{% else %}check{% endif %}"></i>
+                            </a>
+                            <a href="{% url 'delete_user' user.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Je, una uhakika unataka kufuta mtumiaji huyu?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center">Hakuna watumiaji</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

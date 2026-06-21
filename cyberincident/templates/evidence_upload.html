@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block title %}Pakia Ushahidi - CIRS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-file-upload me-2"></i>Pakia Ushahidi</h2>
+    <a href="{% url 'incident_detail' incident.id %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Rudi
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5>Tukio: {{ incident.title }}</h5>
+        <small class="text-muted">#{{ incident.id }} - {{ incident.get_category_display }}</small>
+    </div>
+    <div class="card-body">
+        <form method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="file" class="form-label">Chagua Faili</label>
+                {{ form.file }}
+                <small class="text-muted">
+                    Aina zinazoruhusiwa: PDF, PNG, JPG, TXT, LOG, CSV, XLSX, ZIP, RAR
+                    <br>Ukubwa wa juu: 50MB
+                </small>
+            </div>
+            
+            <div class="mb-3">
+                <label for="description" class="form-label">Maelezo (Hiari)</label>
+                {{ form.description }}
+            </div>
+            
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-upload me-2"></i>Pakia Ushahidi
+            </button>
+            <a href="{% url 'incident_detail' incident.id %}" class="btn btn-secondary">
+                <i class="fas fa-times me-2"></i>Ghairi
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,180 @@
+/* ========== GLOBAL STYLES ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+footer {
+    margin-top: auto;
+}
+
+/* ========== AUTHENTICATION PAGES ========== */
+.auth-body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.auth-container {
+    width: 100%;
+    max-width: 500px;
+}
+
+.auth-box {
+    background: white;
+    border-radius: 15px;
+    padding: 40px 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.auth-header {
+    margin-bottom: 30px;
+}
+
+.auth-header i {
+    color: #667eea;
+}
+
+.auth-header h3 {
+    font-weight: 700;
+    color: #333;
+}
+
+.auth-header p {
+    color: #666;
+}
+
+.auth-footer a {
+    color: #667eea;
+    text-decoration: none;
+}
+
+.auth-footer a:hover {
+    text-decoration: underline;
+}
+
+/* ========== STAT CARDS ========== */
+.stat-card {
+    border-radius: 10px;
+    padding: 20px;
+    color: white;
+    transition: transform 0.3s, box-shadow 0.3s;
+    cursor: pointer;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card .stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+}
+
+.stat-card .stat-label {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.stat-card i {
+    font-size: 2.5rem;
+    opacity: 0.5;
+}
+
+.stat-primary { background: linear-gradient(135deg, #667eea, #764ba2); }
+.stat-success { background: linear-gradient(135deg, #11998e, #38ef7d); }
+.stat-warning { background: linear-gradient(135deg, #f093fb, #f5576c); }
+.stat-danger { background: linear-gradient(135deg, #fa709a, #fee140); }
+.stat-info { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+
+/* ========== BADGES ========== */
+.badge-open { background: #ffc107; color: #000; }
+.badge-investigating { background: #17a2b8; color: #fff; }
+.badge-contained { background: #007bff; color: #fff; }
+.badge-resolved { background: #28a745; color: #fff; }
+.badge-closed { background: #6c757d; color: #fff; }
+
+.badge-low { background: #28a745; color: #fff; }
+.badge-medium { background: #ffc107; color: #000; }
+.badge-high { background: #fd7e14; color: #fff; }
+.badge-critical { background: #dc3545; color: #fff; animation: pulse 2s infinite; }
+
+@keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.7; }
+    100% { opacity: 1; }
+}
+
+/* ========== TABLES ========== */
+.table-hover tbody tr:hover {
+    background-color: rgba(102, 126, 234, 0.05);
+    cursor: pointer;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 768px) {
+    .auth-box {
+        padding: 30px 20px;
+    }
+    .stat-card .stat-number {
+        font-size: 1.8rem;
+    }
+}
+
+/* ========== CUSTOM SCROLLBAR ========== */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #667eea;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #764ba2;
+}
+
+/* ========== TIMELINE ========== */
+.timeline-item {
+    border-left: 3px solid #667eea;
+    padding-left: 15px;
+    margin-bottom: 15px;
+}
+
+/* ========== UPLOAD AREA ========== */
+.upload-area {
+    border: 2px dashed #dee2e6;
+    border-radius: 10px;
+    padding: 40px;
+    text-align: center;
+    transition: all 0.3s;
+    cursor: pointer;
+}
+
+.upload-area:hover {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.upload-area.dragover {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+}

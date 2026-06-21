@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Ongeza Hatua - CIRS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-tools me-2"></i>Ongeza Hatua</h2>
+    <a href="{% url 'incident_detail' incident.id %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Rudi
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h5>Tukio: {{ incident.title }}</h5>
+        <small class="text-muted">#{{ incident.id }} - {{ incident.get_category_display }}</small>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="action_type" class="form-label">Aina ya Hatua</label>
+                {{ form.action_type }}
+            </div>
+            
+            <div class="mb-3">
+                <label for="action_text" class="form-label">Maelezo</label>
+                {{ form.action_text }}
+            </div>
+            
+            <div class="mb-3">
+                <label for="notes" class="form-label">Maelezo ya Ziada (Hiari)</label>
+                {{ form.notes }}
+            </div>
+            
+            <div class="mb-3 form-check">
+                {{ form.is_completed }}
+                <label class="form-check-label" for="is_completed">Imekamilika</label>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-plus me-2"></i>Ongeza Hatua
+            </button>
+            <a href="{% url 'incident_detail' incident.id %}" class="btn btn-secondary">
+                <i class="fas fa-times me-2"></i>Ghairi
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

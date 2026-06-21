@@ -1,0 +1,187 @@
+{% extends "base.html" %}
+
+{% block title %}{{ incident.title }} - CIRS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-file-alt me-2"></i>Tukio #{{ incident.id }}</h2>
+    <div>
+        <a href="{% url 'incident_list' %}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left me-2"></i>Rudi
+        </a>
+        {% if user.profile.role == 'ict' or user.profile.role == 'admin' or incident.reporter == user %}
+        <a href="{% url 'incident_update' incident.id %}" class="btn btn-warning">
+            <i class="fas fa-edit me-2"></i>Hariri
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-8">
+        <!-- Incident Details -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5>Maelezo ya Tukio</h5>
+            </div>
+            <div class="card-body">
+                <h4>{{ incident.title }}</h4>
+                <p>{{ incident.description }}</p>
+                
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <p><strong>Aina:</strong> <span class="badge bg-secondary">{{ incident.get_category_display }}</span></p>
+                        <p><strong>Kiwango:</strong> <span class="badge bg-{{ incident.get_priority_color }}">{{ incident.get_priority_display }}</span></p>
+                        <p><strong>Hali:</strong> <span class="badge bg-{{ incident.get_status_color }}">{{ incident.get_status_display }}</span></p>
+                    </div>
+                    <div class="col-md-6">
+                        <p><strong>Mripoti:</strong> {{ incident.reporter.get_full_name|default:incident.reporter.username }}</p>
+                        <p><strong>Tarehe ya Kuripoti:</strong> {{ incident.reported_at|date:"d/m/Y H:i" }}</p>
+                        {% if incident.resolved_at %}
+                        <p><strong>Imetatuliwa:</strong> {{ incident.resolved_at|date:"d/m/Y H:i" }}</p>
+                        {% endif %}
+                        {% if incident.assigned_to %}
+                        <p><strong>Imepewa:</strong> {{ incident.assigned_to.get_full_name|default:incident.assigned_to.username }}</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+                {% if incident.affected_systems %}
+                <div class="mt-3">
+                    <strong>Mifumo Iliyoathirika:</strong>
+                    <p>{{ incident.affected_systems }}</p>
+                </div>
+                {% endif %}
+                
+                {% if incident.impact_description %}
+                <div class="mt-3">
+                    <strong>Athari:</strong>
+                    <p>{{ incident.impact_description }}</p>
+                </div>
+                {% endif %}
+                
+                {% if incident.root_cause %}
+                <div class="mt-3">
+                    <strong>Chanzo:</strong>
+                    <p>{{ incident.root_cause }}</p>
+                </div>
+                {% endif %}
+                
+                {% if incident.is_confidential %}
+                <div class="mt-3">
+                    <span class="badge bg-danger"><i class="fas fa-lock me-1"></i>Siri</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Evidence -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-file-upload me-2"></i>Ushahidi</h5>
+                <a href="{% url 'evidence_upload' incident.id %}" class="btn btn-sm btn-success">
+                    <i class="fas fa-upload me-1"></i>Pakia Ushahidi
+                </a>
+            </div>
+            <div class="card-body">
+                {% if evidences %}
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Faili</th>
+                                <th>Maelezo</th>
+                                <th>Ukubwa</th>
+                                <th>Tarehe</th>
+                                <th>Vitendo</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for evidence in evidences %}
+                            <tr>
+                                <td>
+                                    <i class="fas {{ evidence.get_icon_class }} me-2"></i>
+                                    {{ evidence.file_name }}
+                                </td>
+                                <td>{{ evidence.description|default:"-" }}</td>
+                                <td>{{ evidence.get_file_size_display }}</td>
+                                <td>{{ evidence.uploaded_at|date:"d/m/Y H:i" }}</td>
+                                <td>
+                                    <a href="{{ evidence.file.url }}" target="_blank" class="btn btn-sm btn-info">
+                                        <i class="fas fa-download"></i>
+                                    </a>
+                                    {% if user.profile.role == 'ict' or user.profile.role == 'admin' or evidence.uploaded_by == user %}
+                                    <a href="{% url 'evidence_delete' evidence.id %}" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted text-center">Hakuna ushahidi uliopakiwa</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-4">
+        <!-- Response Actions -->
+        <div class="card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h5><i class="fas fa-tools me-2"></i>Hatua</h5>
+                {% if user.profile.role == 'ict' or user.profile.role == 'admin' %}
+                <a href="{% url 'response_create' incident.id %}" class="btn btn-sm btn-primary">
+                    <i class="fas fa-plus me-1"></i>Ongeza
+                </a>
+                {% endif %}
+            </div>
+            <div class="card-body">
+                {% if actions %}
+                <div class="timeline">
+                    {% for action in actions %}
+                    <div class="timeline-item">
+                        <div class="d-flex justify-content-between">
+                            <strong>
+                                <i class="fas {{ action.get_action_icon }} me-1"></i>
+                                {{ action.get_action_type_display }}
+                            </strong>
+                            <small class="text-muted">{{ action.timestamp|date:"d/m/Y H:i" }}</small>
+                        </div>
+                        <p class="mb-1">{{ action.action_text }}</p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">Mtekelezaji: {{ action.performer.get_full_name|default:action.performer.username }}</small>
+                            {% if action.is_completed %}
+                            <span class="badge bg-success"><i class="fas fa-check me-1"></i>Imekamilika</span>
+                            {% else %}
+                            <span class="badge bg-warning"><i class="fas fa-clock me-1"></i>Inaendelea</span>
+                            {% endif %}
+                        </div>
+                        {% if action.notes %}
+                        <small class="text-muted d-block mt-1">Maelezo: {{ action.notes }}</small>
+                        {% endif %}
+                        <hr>
+                    </div>
+                    {% endfor %}
+                </div>
+                {% else %}
+                <p class="text-muted text-center">Hakuna hatua zilizochukuliwa</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_css %}
+<style>
+.timeline-item {
+    border-left: 3px solid #667eea;
+    padding-left: 15px;
+    margin-bottom: 15px;
+}
+</style>
+{% endblock %}

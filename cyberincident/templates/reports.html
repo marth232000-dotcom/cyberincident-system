@@ -1,0 +1,204 @@
+{% extends "base.html" %}
+
+{% block title %}Ripoti - CIRS{% endblock %}
+
+{% block content %}
+<h2 class="mb-4"><i class="fas fa-chart-bar me-2"></i>Ripoti na Takwimu</h2>
+
+<div class="row">
+    <div class="col-md-3">
+        <div class="stat-card stat-primary">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <div class="stat-number">{{ total_incidents }}</div>
+                    <div class="stat-label">Jumla ya Matukio</div>
+                </div>
+                <i class="fas fa-shield-alt"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card stat-warning">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <div class="stat-number">{{ by_status|length }}</div>
+                    <div class="stat-label">Hali Mbalimbali</div>
+                </div>
+                <i class="fas fa-tags"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card stat-info">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <div class="stat-number">{{ by_category|length }}</div>
+                    <div class="stat-label">Aina za Matukio</div>
+                </div>
+                <i class="fas fa-list"></i>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card stat-success">
+            <div class="d-flex justify-content-between">
+                <div>
+                    <div class="stat-number">{{ by_priority|length }}</div>
+                    <div class="stat-label">Viwango</div>
+                </div>
+                <i class="fas fa-signal"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-pie me-2"></i>Matukio kwa Aina</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="categoryChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-chart-bar me-2"></i>Matukio kwa Hali</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="statusChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row mt-4">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-exclamation-triangle me-2"></i>Matukio kwa Kiwango</h5>
+            </div>
+            <div class="card-body">
+                <canvas id="priorityChart" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-header">
+                <h5><i class="fas fa-clock me-2"></i>Matukio ya Hivi Karibuni</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Kichwa</th>
+                                <th>Hali</th>
+                                <th>Tarehe</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for incident in recent_incidents %}
+                            <tr>
+                                <td>{{ incident.id }}</td>
+                                <td>{{ incident.title|truncatechars:30 }}</td>
+                                <td><span class="badge bg-{{ incident.get_status_color }}">{{ incident.get_status_display }}</span></td>
+                                <td>{{ incident.reported_at|date:"d/m/Y" }}</td>
+                            </tr>
+                            {% empty %}
+                            <tr>
+                                <td colspan="4" class="text-center">Hakuna matukio</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Category Chart
+    const categoryData = {{ by_category|safe }};
+    const categoryLabels = categoryData.map(d => d.category);
+    const categoryCounts = categoryData.map(d => d.count);
+    
+    new Chart(document.getElementById('categoryChart'), {
+        type: 'doughnut',
+        data: {
+            labels: categoryLabels,
+            datasets: [{
+                data: categoryCounts,
+                backgroundColor: ['#667eea', '#764ba2', '#f093fb', '#f5576c', '#4facfe', '#00f2fe', '#11998e', '#38ef7d']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+    
+    // Status Chart
+    const statusData = {{ by_status|safe }};
+    const statusLabels = statusData.map(d => d.status);
+    const statusCounts = statusData.map(d => d.count);
+    
+    new Chart(document.getElementById('statusChart'), {
+        type: 'bar',
+        data: {
+            labels: statusLabels,
+            datasets: [{
+                label: 'Matukio',
+                data: statusCounts,
+                backgroundColor: ['#ffc107', '#17a2b8', '#007bff', '#28a745', '#6c757d']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { display: false }
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: { stepSize: 1 }
+                }
+            }
+        }
+    });
+    
+    // Priority Chart
+    const priorityData = {{ by_priority|safe }};
+    const priorityLabels = priorityData.map(d => d.priority);
+    const priorityCounts = priorityData.map(d => d.count);
+    
+    new Chart(document.getElementById('priorityChart'), {
+        type: 'pie',
+        data: {
+            labels: priorityLabels,
+            datasets: [{
+                data: priorityCounts,
+                backgroundColor: ['#28a745', '#ffc107', '#fd7e14', '#dc3545']
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                legend: { position: 'bottom' }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}
+{% endblock %}

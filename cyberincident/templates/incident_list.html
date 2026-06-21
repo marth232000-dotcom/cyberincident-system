@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Matukio - CIRS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-list me-2"></i>Matukio</h2>
+    <a href="{% url 'incident_create' %}" class="btn btn-primary">
+        <i class="fas fa-plus me-2"></i>Ripoti Tukio
+    </a>
+</div>
+
+<!-- Filters -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="GET" action="{% url 'incident_list' %}" class="row g-3">
+            <div class="col-md-4">
+                <input type="text" class="form-control" name="q" placeholder="Tafuta tukio..." value="{{ request.GET.q }}">
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" name="status">
+                    <option value="">Hali Zote</option>
+                    <option value="open" {% if request.GET.status == 'open' %}selected{% endif %}>Wazi</option>
+                    <option value="investigating" {% if request.GET.status == 'investigating' %}selected{% endif %}>Inachunguzwa</option>
+                    <option value="contained" {% if request.GET.status == 'contained' %}selected{% endif %}>Imezuiliwa</option>
+                    <option value="resolved" {% if request.GET.status == 'resolved' %}selected{% endif %}>Imetatuliwa</option>
+                    <option value="closed" {% if request.GET.status == 'closed' %}selected{% endif %}>Imefungwa</option>
+                </select>
+            </div>
+            <div class="col-md-3">
+                <select class="form-select" name="priority">
+                    <option value="">Kiwango Chote</option>
+                    <option value="low" {% if request.GET.priority == 'low' %}selected{% endif %}>Chini</option>
+                    <option value="medium" {% if request.GET.priority == 'medium' %}selected{% endif %}>Kati</option>
+                    <option value="high" {% if request.GET.priority == 'high' %}selected{% endif %}>Juu</option>
+                    <option value="critical" {% if request.GET.priority == 'critical' %}selected{% endif %}>Muhimu Sana</option>
+                </select>
+            </div>
+            <div class="col-md-2">
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-search me-2"></i>Chuja
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Incidents Table -->
+<div class="card">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Kichwa</th>
+                        <th>Aina</th>
+                        <th>Kiwango</th>
+                        <th>Hali</th>
+                        <th>Mripoti</th>
+                        <th>Tarehe</th>
+                        <th>Vitendo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for incident in incidents %}
+                    <tr>
+                        <td>{{ incident.id }}</td>
+                        <td>{{ incident.title }}</td>
+                        <td><span class="badge bg-secondary">{{ incident.get_category_display }}</span></td>
+                        <td><span class="badge bg-{{ incident.get_priority_color }}">{{ incident.get_priority_display }}</span></td>
+                        <td><span class="badge bg-{{ incident.get_status_color }}">{{ incident.get_status_display }}</span></td>
+                        <td>{{ incident.reporter.get_full_name|default:incident.reporter.username }}</td>
+                        <td>{{ incident.reported_at|date:"d/m/Y" }}</td>
+                        <td>
+                            <a href="{% url 'incident_detail' incident.id %}" class="btn btn-sm btn-info">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            {% if user.profile.role == 'ict' or user.profile.role == 'admin' or incident.reporter == user %}
+                            <a href="{% url 'incident_update' incident.id %}" class="btn btn-sm btn-warning">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            {% endif %}
+                            {% if user.profile.role == 'admin' or incident.reporter == user %}
+                            <a href="{% url 'incident_delete' incident.id %}" class="btn btn-sm btn-danger">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="8" class="text-center">Hakuna matukio</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        <!-- Pagination -->
+        {% if incidents.has_other_pages %}
+        <nav aria-label="Page navigation">
+            <ul class="pagination justify-content-center">
+                {% if incidents.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ incidents.previous_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.priority %}&priority={{ request.GET.priority }}{% endif %}">
+                        <i class="fas fa-chevron-left"></i>
+                    </a>
+                </li>
+                {% endif %}
+                
+                {% for num in incidents.paginator.page_range %}
+                <li class="page-item {% if incidents.number == num %}active{% endif %}">
+                    <a class="page-link" href="?page={{ num }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.priority %}&priority={{ request.GET.priority }}{% endif %}">
+                        {{ num }}
+                    </a>
+                </li>
+                {% endfor %}
+                
+                {% if incidents.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ incidents.next_page_number }}{% if request.GET.q %}&q={{ request.GET.q }}{% endif %}{% if request.GET.status %}&status={{ request.GET.status }}{% endif %}{% if request.GET.priority %}&priority={{ request.GET.priority }}{% endif %}">
+                        <i class="fas fa-chevron-right"></i>
+                    </a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

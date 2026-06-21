@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block title %}Hariri Tukio - CIRS{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2><i class="fas fa-edit me-2"></i>Hariri Tukio #{{ incident.id }}</h2>
+    <a href="{% url 'incident_detail' incident.id %}" class="btn btn-secondary">
+        <i class="fas fa-arrow-left me-2"></i>Rudi
+    </a>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="mb-3">
+                <label for="title" class="form-label">Kichwa</label>
+                {{ form.title }}
+            </div>
+            
+            <div class="mb-3">
+                <label for="description" class="form-label">Maelezo</label>
+                {{ form.description }}
+            </div>
+            
+            <div class="row">
+                <div class="col-md-4 mb-3">
+                    <label for="category" class="form-label">Aina ya Tukio</label>
+                    {{ form.category }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="priority" class="form-label">Kiwango</label>
+                    {{ form.priority }}
+                </div>
+                <div class="col-md-4 mb-3">
+                    <label for="status" class="form-label">Hali</label>
+                    {{ form.status }}
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="assigned_to" class="form-label">Imepewa</label>
+                {{ form.assigned_to }}
+            </div>
+            
+            <div class="mb-3">
+                <label for="affected_systems" class="form-label">Mifumo Iliyoathirika</label>
+                {{ form.affected_systems }}
+            </div>
+            
+            <div class="mb-3">
+                <label for="impact_description" class="form-label">Athari</label>
+                {{ form.impact_description }}
+            </div>
+            
+            <div class="mb-3">
+                <label for="root_cause" class="form-label">Chanzo</label>
+                {{ form.root_cause }}
+            </div>
+            
+            <div class="mb-3 form-check">
+                {{ form.is_confidential }}
+                <label class="form-check-label" for="is_confidential">Tukio ni Siri</label>
+            </div>
+            
+            <button type="submit" class="btn btn-primary">
+                <i class="fas fa-save me-2"></i>Hifadhi Mabadiliko
+            </button>
+            <a href="{% url 'incident_detail' incident.id %}" class="btn btn-secondary">
+                <i class="fas fa-times me-2"></i>Ghairi
+            </a>
+        </form>
+    </div>
+</div>
+{% endblock %}

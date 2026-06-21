@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Nyumbani - CIRS{% endblock %}
+
+{% block content %}
+<div class="row align-items-center py-5">
+    <div class="col-lg-6">
+        <h1 class="display-4 fw-bold text-primary">Cyber Incident Reporting System</h1>
+        <p class="lead">Mfumo wa kuripoti na kufuatilia matukio ya usalama wa mtandao katika Hospitali ya Arusha.</p>
+        <div class="mt-4">
+            <a href="{% url 'register' %}" class="btn btn-primary btn-lg me-2">
+                <i class="fas fa-user-plus me-2"></i>Jiandikisha Sasa
+            </a>
+            <a href="{% url 'login' %}" class="btn btn-outline-primary btn-lg">
+                <i class="fas fa-sign-in-alt me-2"></i>Ingia
+            </a>
+        </div>
+        <div class="mt-4">
+            <div class="row">
+                <div class="col-4">
+                    <div class="text-center">
+                        <i class="fas fa-shield-alt fa-2x text-primary"></i>
+                        <p class="mt-1"><small>Salama</small></p>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="text-center">
+                        <i class="fas fa-bolt fa-2x text-warning"></i>
+                        <p class="mt-1"><small>Haraka</small></p>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="text-center">
+                        <i class="fas fa-chart-line fa-2x text-success"></i>
+                        <p class="mt-1"><small>Imara</small></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-6 text-center">
+        <i class="fas fa-shield-alt fa-10x text-primary opacity-25"></i>
+    </div>
+</div>
+
+<!-- Features -->
+<div class="row mt-5 pt-5">
+    <div class="col-md-4 text-center">
+        <div class="card border-0 shadow-sm p-4">
+            <i class="fas fa-file-alt fa-3x text-primary mb-3"></i>
+            <h5>Kuripoti Matukio</h5>
+            <p class="text-muted">Ripoti matukio ya usalama kwa urahisi na haraka</p>
+        </div>
+    </div>
+    <div class="col-md-4 text-center">
+        <div class="card border-0 shadow-sm p-4">
+            <i class="fas fa-file-upload fa-3x text-success mb-3"></i>
+            <h5>Kupakia Ushahidi</h5>
+            <p class="text-muted">Pakia faili za ushahidi kwa usalama</p>
+        </div>
+    </div>
+    <div class="col-md-4 text-center">
+        <div class="card border-0 shadow-sm p-4">
+            <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
+            <h5>Kufuatilia Uchunguzi</h5>
+            <p class="text-muted">Fuatilia maendeleo ya uchunguzi wa matukio</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
